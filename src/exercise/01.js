@@ -4,6 +4,12 @@
 import * as React from 'react'
 
 function countReducer(state, newState) {
+  if (typeof newState === 'function') {
+    return {
+      ...state,
+      count: newState(state.count),
+    }
+  }
   return {
     ...state,
     count: newState.count,
