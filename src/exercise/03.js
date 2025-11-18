@@ -2,10 +2,10 @@
 // http://localhost:3000/isolated/exercise/03.js
 
 import * as React from 'react'
+import {use} from 'react'
 
 const CounterContext = React.createContext()
 
-// 🐨 create a CountProvider component here that does this:
 function CounterContextProvider({children}) {
   const [count, setCount] = React.useState(0)
   const value = [count, setCount]
@@ -13,16 +13,21 @@ function CounterContextProvider({children}) {
     <CounterContext.Provider value={value}>{children}</CounterContext.Provider>
   )
 }
+function useCount() {
+  const context = React.useContext(CounterContext)
+  if (!context) {
+    throw new Error('useCount must be used within a CounterContextProvider')
+  }
+  return context
+}
 
 function CountDisplay() {
-  // 🐨 get the count from useContext with the CountContext
-  const [count] = React.useContext(CounterContext)
+  const [count] = useCount()
   return <div>{`The current count is ${count}`}</div>
 }
 
 function Counter() {
-  // 🐨 get the setCount from useContext with the CountContext
-  const [, setCount] = React.useContext(CounterContext)
+  const [, setCount] = useCount()
   const increment = () => setCount(c => c + 1)
   return <button onClick={increment}>Increment count</button>
 }
@@ -30,10 +35,6 @@ function Counter() {
 function App() {
   return (
     <div>
-      {/*
-        🐨 wrap these two components in the CountProvider so they can access
-        the CountContext value
-      */}
       <CounterContextProvider>
         <CountDisplay />
         <Counter />
